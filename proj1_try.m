@@ -10,6 +10,10 @@ seqLength = 6255;
 
 point1 = [0,0];
 point2 = [0,0];
+cent1= [];
+cent2= [];
+cent3= [];
+cent4= [];
 
 se= strel('disk',9);
 
@@ -53,19 +57,24 @@ for i = 1: seqLength
             dWindow = max([lin col]) - upLPoint + 1;
             
             
-%             centmin = 1;
-%             cent1(i)= regionProps(inds(j)).Centroid(1);
-%             cent2(i)= regionProps(inds(j)).Centroid(2); 
-% 
-%             if(length(cent1) > 10)
-%                 centmin = (length(cent1)-10);
-%             end
-%             
-%             for l=(centmin):length(cent1)
-%                 hold on; axis off;
-%                 %line([cent1(l-1) cent2(l-1)] , [cent1(l) cent2(l)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
-%                 plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
-%             end
+            centmin = 1;
+
+                cent1(i)= regionProps(inds(1)).Centroid(1);
+                cent2(i)= regionProps(inds(1)).Centroid(2); 
+                cent3(i)= regionProps(inds(2)).Centroid(1);
+                cent4(i)= regionProps(inds(2)).Centroid(2); 
+
+
+            if(length(cent1) > 10)
+                centmin = (length(cent1)-10);
+            end
+            
+            for l=(centmin):length(cent1)
+                hold on; axis off;
+                %line([cent1(l) cent2(l)] , [cent1(l+1) cent2(l+1)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
+                plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
+                plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
+            end
               
             
             
