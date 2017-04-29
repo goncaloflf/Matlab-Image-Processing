@@ -10,10 +10,10 @@ seqLength = 6255;
 
 point1 = [0,0];
 point2 = [0,0];
-cent1= [];
-cent2= [];
-cent3= [];
-cent4= [];
+cent1= zeros(seqLength);
+cent2= zeros(seqLength);
+cent3= zeros(seqLength);
+cent4= zeros(seqLength);
 
 se= strel('disk',9);
 
@@ -21,7 +21,7 @@ figure;
 
 
 for i = 1: seqLength
-    i
+    
     imgfr = imread(sprintf('SonMated\\frame_%.1d.tif',i)); %corre cada frame do video com o ciclo //works
     hold off
     imshow(imgfr);
@@ -58,23 +58,17 @@ for i = 1: seqLength
             
             
             centmin = 1;
-
+            if (length(inds)> 1)
                 cent1(i)= regionProps(inds(1)).Centroid(1);
                 cent2(i)= regionProps(inds(1)).Centroid(2); 
                 cent3(i)= regionProps(inds(2)).Centroid(1);
                 cent4(i)= regionProps(inds(2)).Centroid(2); 
-
-
-            if(length(cent1) > 10)
-                centmin = (length(cent1)-10);
             end
-            
-            for l=(centmin):length(cent1)
-                hold on; axis off;
-                %line([cent1(l) cent2(l)] , [cent1(l+1) cent2(l+1)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
-                plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
-                plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
+
+            if(i > 10)
+                centmin = (i-10);
             end
+
               
             
             
@@ -98,20 +92,30 @@ for i = 1: seqLength
         distance = 0;
     end
     
-    drawnow
-    subplot(1,2,1);
-    x(i) = i;
-    y(i) = distance;
+    for l=(centmin):i
+        hold on; axis off;
+        if (length(inds)> 1)
+            %line([cent1(l) cent2(l)] , [cent1(l+1) cent2(l+1)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
+            plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
+            plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
+        end
+    end  
     
-    plot(x,y);
-    drawnow
-    subplot(1,2,2);
+    
 
-   
+    subplot(1,2,1);
+    
+    
+    x(i) = i;
+    y(i) = distance; 
+    plot(x,y);
+    subplot(1,2,2);
+     drawnow
+
+
     end
 
     
-      
     
 end
 
