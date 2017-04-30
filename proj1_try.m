@@ -94,10 +94,13 @@ for i = 1: seqLength
     
     for l=(centmin):i
         hold on; axis off;
-        if (length(inds)> 1)
-            %line([cent1(l) cent2(l)] , [cent1(l+1) cent2(l+1)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
-            plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
-            plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
+        if (length(inds)> 1 && l > 2)
+            line([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)], [1 1],'LineStyle','-', 'Color','red');
+            line([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)], [1 1],'LineStyle','-', 'Color','blue');
+%             plot([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)])
+%             plot([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)])
+%             plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
+%             plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
         end
     end  
     
