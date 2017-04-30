@@ -95,6 +95,11 @@ for i = 1: seqLength
     for l=(centmin):i
         hold on; axis off;
         if (length(inds)> 1 && l > 2)
+            d1 =  pdist([cent1(l-1), cent1(l) ; cent2(l-1), cent2(l)],'euclidean');
+            d2 =  pdist([cent3(l-1), cent3(l) ; cent4(l-1), cent4(l)],'euclidean');
+            str1 = strcat('Mite 1 velocity: ',num2str(d1), ' pixel/frame');
+            str2 = strcat('Mite 2 velocity: ',num2str(d2), ' pixel/frame');
+            
             line([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)], [1 1],'LineStyle','-', 'Color','red');
             line([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)], [1 1],'LineStyle','-', 'Color','blue');
 %             plot([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)])
@@ -102,9 +107,11 @@ for i = 1: seqLength
 %             plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
 %             plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
         end
-    end  
-    
-    
+    end 
+    if (length(inds)> 1 && l > 2)
+        tex = text(0, -100, str1);
+        tex1 = text(0, -60, str2);
+    end
 
     subplot(1,2,1);
     
@@ -114,7 +121,7 @@ for i = 1: seqLength
     plot(x,y);
     
     hTitle  = title ('Distance Between Mites');
-    hYLabel = ylabel('Distance ');
+    hYLabel = ylabel('Distance (pixel) ');
     hXLabel = xlabel('Frames ');
     set( gca                       , ...
     'FontName'   , 'Helvetica' );
