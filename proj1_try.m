@@ -67,12 +67,12 @@ for i = 1: seqLength
     %find male and female
     if (length(inds)) > 1
         if(regionProps(inds(1)).Area > regionProps(inds(2)).Area)
-            male = 2; female = 1;
+            male = 2; female = 1;male_o = 2; female_o = 1;
         else
-            male = 1; female = 2;
+            male = 1; female = 2;male_o = 1; female_o = 2;
         end
     else
-        male = 1; female = 1;
+        male = 1; female = 1;male_o = 1; female_o = 1;
     end
             
     
@@ -103,24 +103,26 @@ for i = 1: seqLength
                 
                 d1 = pdist([cent1(l-1), cent2(l-1) ; cent1(l), cent2(l)],'euclidean');
                 d1_aux = pdist([cent1(l-1), cent2(l-1) ; cent3(l), cent4(l)],'euclidean');
-                if ( d1_aux < d1)
+                d2 = pdist([cent3(l-1), cent4(l-1) ; cent3(l), cent4(l)],'euclidean');
+                d2_aux = pdist([cent3(l-1), cent4(l-1) ; cent1(l), cent2(l)],'euclidean');
+                if ( d1_aux < d1 && Switch == false)
                     male_switch = female;
                     female_switch = male;
                     d1 = d1_aux;
                     male = male_switch;
                     female = female_switch;
                     Switch = true;
-                end
-                
-                d2 =  pdist([cent3(l-1), cent4(l-1) ; cent3(l), cent4(l)],'euclidean');
-                d2_aux = pdist([cent3(l-1), cent4(l-1) ; cent1(l), cent2(l)],'euclidean');
-                if ( d2_aux < d2)
+                elseif ( d2_aux < d2 && Switch == false)
                     male_switch = female;
                     female_switch = male;
                     d2 = d2_aux;
                     male = male_switch;
                     female = female_switch;
                     Switch = true;
+                else 
+                    male = male_o;
+                    female = female_o;
+                    Switch = false;
                 end
                 
                 str1 = strcat('Mite 1 velocity: ',num2str(d1), ' pixel/frame');
