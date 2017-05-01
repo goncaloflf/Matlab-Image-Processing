@@ -1,5 +1,7 @@
 clear all, close all
 
+tic
+
 imgbk = imread('SonMated\\BG_1.tif');
 
 thr = 30;
@@ -7,6 +9,18 @@ thr = 30;
 minArea = 20;
 
 seqLength = 6255;
+
+t=0;
+
+nrTouch = 0;
+inTouch = false;
+firstTouch = 0;
+
+male = 0;
+female = 0;
+
+distanceMale=0;
+distanceFemale=0;
 
 point1 = [0,0];
 point2 = [0,0];
@@ -41,12 +55,25 @@ for i = 1: seqLength
 
     [lb num]=bwlabel(bw); % faz label das zonas encontradas no imgdif //works
     regionProps = regionprops(lb,'area','Filledimage','Centroid'); % vai buscar as propriedades das zonas encontradas //works
+
+    
     inds = find([regionProps.Area]>minArea);
     
 %     for z=1:length(regionProps)
 %        regionProps.Area 
 %     end
-    
+
+    %find male and female
+    if (length(inds)) > 1
+        if(regionProps(inds(1)).Area > regionProps(inds(2)).Area)
+            male = 2; female = 1;
+        else
+            male = 1; female = 2;
+        end
+    else
+        male = 1; female = 1;
+    end
+            
     
     regnum = length(inds);  
     
@@ -71,8 +98,11 @@ for i = 1: seqLength
 
               
             
-            
-            rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)], 'EdgeColor',[1 1 0], 'linewidth',2);
+            if(j==male)
+                rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
+            elseif(j==female)
+                rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)], 'EdgeColor',[1 0.0784314 0.576471], 'linewidth',2)
+            end
         end
 
     if (length(inds) > 1)
@@ -86,10 +116,20 @@ for i = 1: seqLength
         distance = pdist(X,'euclidean');
         line([point1(1) point2(1)] , [point1(2) point2(2)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
         middlePoint = [(point1(1)+point2(1))/2, (point1(2)+point2(2))/2];
-        t = text(middlePoint(1), middlePoint(2), num2str(distance));            
+        t = text(middlePoint(1), middlePoint(2), num2str(distance)); 
+        
+        inTouch = false;
         
     else
         distance = 0;
+        if (inTouch == false)
+            inTouch=true;
+            nrTouch = nrTouch + 1;
+        end
+        if (firstTouch==0)
+            firtTouch=1;
+            t=toc;
+        end
     end
     
     for l=(centmin):i
@@ -99,6 +139,10 @@ for i = 1: seqLength
             d2 =  pdist([cent3(l-1), cent3(l) ; cent4(l-1), cent4(l)],'euclidean');
             str1 = strcat('Mite 1 velocity: ',num2str(d1), ' pixel/frame');
             str2 = strcat('Mite 2 velocity: ',num2str(d2), ' pixel/frame');
+            
+            distanceMale = distanceMale + d1; %fix, not d1
+            distanceFemale = distanceFemale + d2; %fix, not d2
+            
             
             line([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)], [1 1],'LineStyle','-', 'Color','red');
             line([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)], [1 1],'LineStyle','-', 'Color','blue');
@@ -148,12 +192,15 @@ for i = 1: seqLength
     subplot(1,2,2);
     drawnow
 
-
     end
+ 
 
-    
-    
 end
+disp(num2str(t));
+fprintf('Number of touches: %i \n', nrTouch);
+%fprintf('Time spent until the 1st couple (or touch) occurs: %s \n', num2str(t));
+fprintf('Distance performed by the male: %i \n', distanceMale);
+fprintf('Distance performed by the female: %i \n', distanceFemale);
 
    
    
