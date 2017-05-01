@@ -83,21 +83,6 @@ for i = 1: seqLength
             upLPoint = min([lin col]);
             dWindow = max([lin col]) - upLPoint + 1;
             
-            
-            centmin = 1;
-            if (length(inds)> 1)
-                cent1(i)= regionProps(inds(1)).Centroid(1);
-                cent2(i)= regionProps(inds(1)).Centroid(2); 
-                cent3(i)= regionProps(inds(2)).Centroid(1);
-                cent4(i)= regionProps(inds(2)).Centroid(2); 
-            end
-
-            if(i > 10)
-                centmin = (i-10);
-            end
-
-              
-            
             if(j==male)
                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
             elseif(j==female)
@@ -131,10 +116,27 @@ for i = 1: seqLength
             t=toc;
         end
     end
+     
+    centmin = 1;
+    if (length(inds)> 1)
+        cent1(i)= regionProps(inds(male)).Centroid(1);
+        cent2(i)= regionProps(inds(male)).Centroid(2); 
+        cent3(i)= regionProps(inds(female)).Centroid(1);
+        cent4(i)= regionProps(inds(female)).Centroid(2); 
+    else
+        cent1(i)= regionProps(inds(1)).Centroid(1);
+        cent2(i)= regionProps(inds(1)).Centroid(2); 
+        cent3(i)= regionProps(inds(1)).Centroid(1);
+        cent4(i)= regionProps(inds(1)).Centroid(2); 
+    end
+
+    if(i > 10)
+        centmin = (i-10);
+    end    
     
     for l=(centmin):i
         hold on; axis off;
-        if (length(inds)> 1 && l > 2)
+        if (length(inds)> 1 && l > 2 )
             d1 =  pdist([cent1(l-1), cent1(l) ; cent2(l-1), cent2(l)],'euclidean');
             d2 =  pdist([cent3(l-1), cent3(l) ; cent4(l-1), cent4(l)],'euclidean');
             str1 = strcat('Mite 1 velocity: ',num2str(d1), ' pixel/frame');
@@ -144,8 +146,8 @@ for i = 1: seqLength
             distanceFemale = distanceFemale + d2; %fix, not d2
             
             
-            line([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)], [1 1],'LineStyle','-', 'Color','red');
-            line([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)], [1 1],'LineStyle','-', 'Color','blue');
+            line([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','red');
+            line([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','blue');
 %             plot([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)])
 %             plot([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)])
 %             plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
