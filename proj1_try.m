@@ -11,6 +11,7 @@ minArea = 20;
 seqLength = 6255;
 
 t=0;
+Switch = false;
 
 nrTouch = 0;
 inTouch = false;
@@ -78,6 +79,72 @@ for i = 1: seqLength
     regnum = length(inds);  
     
     if regnum
+        
+        centmin = 1;
+        if (length(inds)> 1)
+            cent1(i)= regionProps(inds(male)).Centroid(1);
+            cent2(i)= regionProps(inds(male)).Centroid(2); 
+            cent3(i)= regionProps(inds(female)).Centroid(1);
+            cent4(i)= regionProps(inds(female)).Centroid(2); 
+        else
+            cent1(i)= regionProps(inds(1)).Centroid(1);
+            cent2(i)= regionProps(inds(1)).Centroid(2); 
+            cent3(i)= regionProps(inds(1)).Centroid(1);
+            cent4(i)= regionProps(inds(1)).Centroid(2); 
+        end
+
+        if(i > 10)
+            centmin = (i-10);
+        end    
+
+        for l=(centmin):i
+            hold on; axis off;
+            if (  l > 2 )
+                
+                d1 = pdist([cent1(l-1), cent2(l-1) ; cent1(l), cent2(l)],'euclidean');
+                d1_aux = pdist([cent1(l-1), cent2(l-1) ; cent3(l), cent4(l)],'euclidean');
+                if ( d1_aux < d1)
+                    male_switch = female;
+                    female_switch = male;
+                    d1 = d1_aux;
+                    male = male_switch;
+                    female = female_switch;
+                    Switch = true;
+                end
+                
+                d2 =  pdist([cent3(l-1), cent4(l-1) ; cent3(l), cent4(l)],'euclidean');
+                d2_aux = pdist([cent3(l-1), cent4(l-1) ; cent1(l), cent2(l)],'euclidean');
+                if ( d2_aux < d2)
+                    male_switch = female;
+                    female_switch = male;
+                    d2 = d2_aux;
+                    male = male_switch;
+                    female = female_switch;
+                    Switch = true;
+                end
+                
+                str1 = strcat('Mite 1 velocity: ',num2str(d1), ' pixel/frame');
+                str2 = strcat('Mite 2 velocity: ',num2str(d2), ' pixel/frame');
+
+                distanceMale = distanceMale + d1; %fix, not d1
+                distanceFemale = distanceFemale + d2; %fix, not d2
+
+                if ( Switch == true)
+                line([cent1(l-1) cent3(l)] , [cent2(l-1)  cent4(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','red');
+                line([cent3(l-1) cent1(l)] , [cent4(l-1)  cent2(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','blue');
+                Switch = false;
+                else
+                    line([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','red');
+                    line([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','blue');
+                end
+    %             plot([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)])
+    %             plot([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)])
+    %             plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
+    %             plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
+            end
+        end         
+        
+        
         for j=1:regnum
             [lin col]= find(lb == inds(j));
             upLPoint = min([lin col]);
@@ -117,43 +184,7 @@ for i = 1: seqLength
         end
     end
      
-    centmin = 1;
-    if (length(inds)> 1)
-        cent1(i)= regionProps(inds(male)).Centroid(1);
-        cent2(i)= regionProps(inds(male)).Centroid(2); 
-        cent3(i)= regionProps(inds(female)).Centroid(1);
-        cent4(i)= regionProps(inds(female)).Centroid(2); 
-    else
-        cent1(i)= regionProps(inds(1)).Centroid(1);
-        cent2(i)= regionProps(inds(1)).Centroid(2); 
-        cent3(i)= regionProps(inds(1)).Centroid(1);
-        cent4(i)= regionProps(inds(1)).Centroid(2); 
-    end
 
-    if(i > 10)
-        centmin = (i-10);
-    end    
-    
-    for l=(centmin):i
-        hold on; axis off;
-        if (length(inds)> 1 && l > 2 )
-            d1 =  pdist([cent1(l-1), cent1(l) ; cent2(l-1), cent2(l)],'euclidean');
-            d2 =  pdist([cent3(l-1), cent3(l) ; cent4(l-1), cent4(l)],'euclidean');
-            str1 = strcat('Mite 1 velocity: ',num2str(d1), ' pixel/frame');
-            str2 = strcat('Mite 2 velocity: ',num2str(d2), ' pixel/frame');
-            
-            distanceMale = distanceMale + d1; %fix, not d1
-            distanceFemale = distanceFemale + d2; %fix, not d2
-            
-            
-            line([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','red');
-            line([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','blue');
-%             plot([cent1(l-1) cent1(l)] , [cent2(l-1)  cent2(l)])
-%             plot([cent3(l-1) cent3(l)] , [cent4(l-1)  cent4(l)])
-%             plot(cent1(l),cent2(l), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
-%             plot(cent3(l),cent4(l), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
-        end
-    end 
     if (length(inds)> 1 && l > 2)
         tex = text(0, -100, str1);
         tex1 = text(0, -60, str2);
@@ -196,7 +227,6 @@ for i = 1: seqLength
 
     end
  
-
 end
 disp(num2str(t));
 fprintf('Number of touches: %i \n', nrTouch);
