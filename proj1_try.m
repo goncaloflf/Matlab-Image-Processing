@@ -19,6 +19,9 @@ firstTouch = 0;
 firstTouchTime=0; 
 totalTime=0;
 
+nrCouples=0;
+coupleDurations = zeros(1,10);
+
 timeDisplay=0; %not used
 
 male = 0;
@@ -59,8 +62,8 @@ for i = 1: seqLength
     
     bw = imclose(imgdif, se); % faz uma dilatação seguida de uma erosão com SE correspondente //works
 
-    %imshow(bw);
-    %drawnow    
+    imshow(bw);
+    drawnow    
 
     [lb num]=bwlabel(bw); % faz label das zonas encontradas no imgdif //works
     regionProps = regionprops(lb,'area','Filledimage','Centroid'); % vai buscar as propriedades das zonas encontradas //works
@@ -180,13 +183,24 @@ for i = 1: seqLength
         middlePoint = [(point1(1)+point2(1))/2, (point1(2)+point2(2))/2];
         time = text(middlePoint(1), middlePoint(2), num2str(distance)); 
         
+        if (inTouch==true)
+            inTouch = false;
+            duration = toc(coupleTime);
+            if (duration >= 60)
+                nrCouples=nrCouples + 1;
+                coupleDurations(nrCouples+1)=duration;
+            end
+        end
         inTouch = false;
+        
         
     else
         distance = 0;
         if (inTouch == false)
             inTouch=true;
+            coupleTime = tic;
             nrTouch = nrTouch + 1;
+
         end
         if (firstTouch==0)    %Codigo para detetar primeiro toque
             firstTouchTime=toc(globalCount);
@@ -202,13 +216,20 @@ for i = 1: seqLength
     end
     
     str3 = strcat('Distance performed by the male: ', num2str(distanceMale), ' pixels');
-    str4 = strcat('Distance performed by the female: ', num2str(distanceMale), ' pixels');
+    str4 = strcat('Distance performed by the female: ', num2str(distanceFemale), ' pixels');
     str6 = strcat('Number of touches: ', num2str(nrTouch));
 
     if (firstTouchTime == 0)
         str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(totalTime), 'seconds');
     else
        str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(firstTouchTime), 'seconds');  
+    end
+    
+    for j=1:nrCouples
+        if coupleDurations(nrCouples+1) > 0
+            strAux = srtcat('Couple number',j,'lasts',60-coupleDurations(nrCouples+1), 'seconds');
+            text (0 , 500 + j*40, strAux);
+        end
     end
     
     %Display distante
@@ -264,7 +285,7 @@ for i = 1: seqLength
     'LineWidth'   , 1         );
     subplot(1,2,2);
     drawnow
-
+        
     end
  
     totalTime = totalTime + toc(countTime);
