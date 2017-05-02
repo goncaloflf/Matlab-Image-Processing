@@ -1,7 +1,5 @@
 clear all, close all
 
-tic
-
 imgbk = imread('SonMated\\BG_1.tif');
 
 thr = 30;
@@ -10,12 +8,15 @@ minArea = 20;
 
 seqLength = 6255;
 
-t=0;
 Switch = false;
 
 nrTouch = 0;
 inTouch = false;
-firstTouch = 0;
+
+firstTouch = 0; %no codigo comentado
+firstTouchTime=0; %no codigo comentado
+timeSpent=0; %no codigo comentado
+timeDisplay=0; %not used
 
 male = 0;
 female = 0;
@@ -33,6 +34,7 @@ cent4= zeros(seqLength);
 se= strel('disk',9);
 
 figure;
+
 
 
 for i = 1: seqLength
@@ -170,7 +172,7 @@ for i = 1: seqLength
         distance = pdist(X,'euclidean');
         line([point1(1) point2(1)] , [point1(2) point2(2)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
         middlePoint = [(point1(1)+point2(1))/2, (point1(2)+point2(2))/2];
-        t = text(middlePoint(1), middlePoint(2), num2str(distance)); 
+        time = text(middlePoint(1), middlePoint(2), num2str(distance)); 
         
         inTouch = false;
         
@@ -180,10 +182,11 @@ for i = 1: seqLength
             inTouch=true;
             nrTouch = nrTouch + 1;
         end
-        if (firstTouch==0)
-            firtTouch=1;
-            t=toc;
-        end
+%         if (firstTouch==0)    %Codigo para detetar primeiro toque
+%             firstTouchTime=timeSpent;
+%             firstTouch=1;
+%         end
+%             
     end
      
 
@@ -191,6 +194,28 @@ for i = 1: seqLength
         tex = text(0, -100, str1);
         tex1 = text(0, -60, str2);
     end
+    
+    str3 = strcat('Distance performed by the male: ', num2str(distanceMale), ' pixels');
+    str4 = strcat('Distance performed by the female: ', num2str(distanceMale), ' pixels');
+    str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', 'todo'); %insert time variable
+    str6 = strcat('Number of touches: ', num2str(nrTouch));
+
+    %Display distante
+    tex2 = text(0, -300, str3);
+    tex3 = text(0, -260, str4);
+    
+    %Display legend: Male, Female
+    tex4 = text(0, 500, '\bullet', 'color',[0.117647 0.564706 1] );
+    tex5 = text(20, 500, 'Male');
+    tex6 = text(110, 500, '\bullet', 'color',[1 0.0784314 0.576471]);
+    tex7 = text(130, 500, 'Female');
+    
+    %Display Time
+    tex8 = text(0, -160, str5);
+    
+    %Display Touhes
+    tex9 = text(0, -200, str6);
+
 
     subplot(1,2,1);
     
@@ -202,6 +227,8 @@ for i = 1: seqLength
     hTitle  = title ('Distance Between Mites');
     hYLabel = ylabel('Distance (pixel) ');
     hXLabel = xlabel('Frames ');
+   
+
     set( gca                       , ...
     'FontName'   , 'Helvetica' );
     set([hTitle, hXLabel, hYLabel], ...
@@ -229,12 +256,11 @@ for i = 1: seqLength
 
     end
  
-end
-disp(num2str(t));
-fprintf('Number of touches: %i \n', nrTouch);
-%fprintf('Time spent until the 1st couple (or touch) occurs: %s \n', num2str(t));
-fprintf('Distance performed by the male: %i \n', distanceMale);
-fprintf('Distance performed by the female: %i \n', distanceFemale);
+    end
+
+
+
+
 
    
    
