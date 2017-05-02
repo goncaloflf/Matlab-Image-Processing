@@ -48,6 +48,8 @@ for i = 1: seqLength
     imgfr = imread(sprintf('SonMated\\frame_%.1d.tif',i)); %corre cada frame do video com o ciclo //works
     hold off
     imshow(imgfr);
+
+    
     
     imgdif = ... %cria uma binary image imgdif que é a diferença entre o frame actual e o background dando uma imagem com os elementos que se estão a mover // works
        (abs(double(imgbk(:,:,1))-double(imgfr(:,:,1)))>thr) | ...
@@ -183,7 +185,11 @@ for i = 1: seqLength
         inTouch = false;
         
     else
+        hold off
         distance = 0;
+        img_crop = imcrop(imgfr, [regionProps(inds(1)).Centroid(1)-50,regionProps(inds(1)).Centroid(2)-50,100,100]);
+        img_resized = imresize(img_crop,[480,720]);
+        imshow(img_resized);
         if (inTouch == false)
             inTouch=true;
             nrTouch = nrTouch + 1;
