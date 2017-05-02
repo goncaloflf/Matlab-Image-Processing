@@ -1,5 +1,7 @@
 clear all, close all
 
+globalCount = tic;
+
 imgbk = imread('SonMated\\BG_1.tif');
 
 thr = 30;
@@ -13,9 +15,10 @@ Switch = false;
 nrTouch = 0;
 inTouch = false;
 
-firstTouch = 0; %no codigo comentado
-firstTouchTime=0; %no codigo comentado
-timeSpent=0; %no codigo comentado
+firstTouch = 0; 
+firstTouchTime=0; 
+totalTime=0;
+
 timeDisplay=0; %not used
 
 male = 0;
@@ -37,8 +40,11 @@ figure;
 
 
 
+
 for i = 1: seqLength
     
+    countTime = tic;
+
     imgfr = imread(sprintf('SonMated\\frame_%.1d.tif',i)); %corre cada frame do video com o ciclo //works
     hold off
     imshow(imgfr);
@@ -182,11 +188,11 @@ for i = 1: seqLength
             inTouch=true;
             nrTouch = nrTouch + 1;
         end
-%         if (firstTouch==0)    %Codigo para detetar primeiro toque
-%             firstTouchTime=timeSpent;
-%             firstTouch=1;
-%         end
-%             
+        if (firstTouch==0)    %Codigo para detetar primeiro toque
+            firstTouchTime=toc(globalCount);
+            firstTouch=1;
+        end
+            
     end
      
 
@@ -197,9 +203,14 @@ for i = 1: seqLength
     
     str3 = strcat('Distance performed by the male: ', num2str(distanceMale), ' pixels');
     str4 = strcat('Distance performed by the female: ', num2str(distanceMale), ' pixels');
-    str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', 'todo'); %insert time variable
     str6 = strcat('Number of touches: ', num2str(nrTouch));
 
+    if (firstTouchTime == 0)
+        str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(totalTime), 'seconds');
+    else
+       str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(firstTouchTime), 'seconds');  
+    end
+    
     %Display distante
     tex2 = text(0, -300, str3);
     tex3 = text(0, -260, str4);
@@ -256,6 +267,7 @@ for i = 1: seqLength
 
     end
  
+    totalTime = totalTime + toc(countTime);
     end
 
 
