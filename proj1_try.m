@@ -17,11 +17,15 @@ function proj1_try
     nrTouch = 0;
     inTouch = false;
 
+
+nrCouples=0;
+coupleDurations = zeros(1,10);
+
+
     firstTouch = 0; 
     firstTouchTime=0; 
     totalTime=0;
 
-    timeDisplay=0; %not used
 
     male = 0;
     female = 0;
@@ -58,6 +62,7 @@ function proj1_try
     x = [];
     y = [];
     keyframes = [];
+    space={' '};
     
     function faster(~,~) 
        rate = rate * 2;
@@ -97,6 +102,7 @@ function proj1_try
         imgfr = imread(sprintf('SonMated\\frame_%.1d.tif',i)); %corre cada frame do video com o ciclo //works
         hold off
         imshow(imgfr);
+
 
         
         
@@ -185,8 +191,8 @@ function proj1_try
                             Switch = false;
                         end
                         
-                        str1 = strcat('Mite 1 velocity: ',num2str(d1), ' pixel/frame');
-                        str2 = strcat('Mite 2 velocity: ',num2str(d2), ' pixel/frame');
+                        str1 = strcat('Mite 1 velocity: ',space, num2str(d1), space, ' pixel/frame');
+                        str2 = strcat('Mite 2 velocity: ',space, num2str(d2), space, ' pixel/frame');
 
                         distanceMale = distanceMale + d1; %fix, not d1
                         distanceFemale = distanceFemale + d2; %fix, not d2
@@ -233,6 +239,14 @@ function proj1_try
             middlePoint = [(point1(1)+point2(1))/2, (point1(2)+point2(2))/2];
             time = text(middlePoint(1), middlePoint(2), num2str(distance)); 
             
+            if (inTouch==true)
+                inTouch = false;
+                duration = toc(coupleTime)*rate;
+                if (duration >= 60)
+                    nrCouples=nrCouples + 1;
+                    coupleDurations(nrCouples+1)=duration;
+                end
+            end
             inTouch = false;
             
         else
@@ -243,11 +257,12 @@ function proj1_try
             imshow(img_resized);
             if (inTouch == false)
                 inTouch=true;
+                coupleTime = tic;
                 nrTouch = nrTouch + 1;
             end
-            if (firstTouch==0)    %Codigo para detetar primeiro toque
-                firstTouchTime=toc(globalCount);
-                firstTouch=1;
+            if (firstTouch==0)    
+                firstTouchTime=toc(globalCount)*rate;
+                firstTouch=1;  
             end
                 
         end
@@ -257,7 +272,7 @@ function proj1_try
             tex = text(0, -100, str1);
             tex1 = text(0, -60, str2);
         end
-        
+		
         str3 = strcat('Distance performed by the male: ', num2str(distanceMale), ' pixels');
         str4 = strcat('Distance performed by the female: ', num2str(distanceMale), ' pixels');
         str6 = strcat('Number of touches: ', num2str(nrTouch));
@@ -268,6 +283,13 @@ function proj1_try
         else
         str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(frame2time(i)), 'seconds');  
         end
+		
+		for j=1:nrCouples
+			if coupleDurations(nrCouples+1) > 0
+				strAux = strcat('Couple number', space, num2str(j), space, 'lasted', space, num2str(coupleDurations(nrCouples+1)-60),space, 'seconds');
+				text (0 , 500 + j*40, strAux);
+			end
+		end
         
         if(distance ~= 0 && ~expectTouch)
             expectTouch = true;
@@ -300,6 +322,7 @@ function proj1_try
         if(drawGraphic)
             figure(f2);
             %subplot(1,2,1);
+
 
             plot(x,y);
 
@@ -344,10 +367,11 @@ function proj1_try
 
         end
     
-        totalTime = totalTime + toc(countTime);
+        totalTime = totalTime + toc(countTime)*rate;
         
         i = i + rate;
     end
+	
     figure;
     keyframes
     rows = ceil(length(keyframes)/3);
