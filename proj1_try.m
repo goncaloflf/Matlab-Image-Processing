@@ -38,30 +38,60 @@ function proj1_try
 
     se= strel('disk',9);
 
-    figure;
+    f2 = figure;
+    f1 = figure;
+
+        hold on
+        uicontrol('Style','pushbutton','String','Fast Forward','Callback',@faster,'Position',[10 2 90 20]);
+        uicontrol('Style','pushbutton','String','Normal Speed','Callback',@normalSpeed,'Position',[100 2 90 20]);
+        uicontrol('Style','pushbutton','String','Toggle Graphic','Callback',@toggleGraphic,'Position',[400 2 90 20]);
+        uicontrol('Style','pushbutton','String','Exit','Callback',@exit,'Position',[500 2 90 20]);
+        hold off
+
 
     rate = 1;
-    
+    expectTouch = true;
     drawTrail = true;
     lastNormal = -10;
+    drawGraphic = false;
+    toReturn = false;
     x = [];
     y = [];
+    keyframes = [];
     
-    function faster(source,event) 
+    function faster(~,~) 
        rate = rate * 2;
        drawTrail = false;
     end
 
-    function normalSpeed(source,event)
+    function normalSpeed(~,~)
        rate = 1;
        drawTrail = true;
        lastNormal = i;
+    end
+
+    function toggleGraphic(~,~)
+        drawGraphic = ~drawGraphic;
+        drawGraphic
+    end
+
+    function time = frame2time(frameNo)
+       time = (frameNo * 833) / 6255;
+    end
+
+    function exit(~,~)
+        clear all, close all;
+        toReturn = true;
+        return
     end
 
     i=1;
 
     while i <= seqLength
         
+        if(toReturn)
+           return 
+        end
         countTime = tic;
 
         imgfr = imread(sprintf('SonMated\\frame_%.1d.tif',i)); %corre cada frame do video com o ciclo //works
@@ -233,9 +263,18 @@ function proj1_try
         str6 = strcat('Number of touches: ', num2str(nrTouch));
 
         if (firstTouchTime == 0)
-            str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(totalTime), 'seconds');
+
+            str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(frame2time(i)), 'seconds');
         else
-        str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(firstTouchTime), 'seconds');  
+        str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(frame2time(i)), 'seconds');  
+        end
+        
+        if(distance ~= 0 && ~expectTouch)
+            expectTouch = true;
+        
+        elseif(distance == 0 && expectTouch)
+            keyframes(length(keyframes)+1) = i;
+            expectTouch = false;
         end
         
         %Display distante
@@ -254,54 +293,71 @@ function proj1_try
         %Display Touhes
         tex9 = text(0, -200, str6);
 
-
-        subplot(1,2,1);
+        x(length(x)+1) = i/30;
+        y(length(y)+1) = distance;
         
-        
-        x(length(x)+1) = i;
-        y(length(y)+1) = distance; 
-        plot(x,y);
-        
-        hTitle  = title ('Distance Between Mites');
-        hYLabel = ylabel('Distance (pixel) ');
-        hXLabel = xlabel('Frames ');
-    
+        %only draws the graphic is prompted by the user
+        if(drawGraphic)
+            figure(f2);
+            %subplot(1,2,1);
 
-        set( gca                       , ...
-        'FontName'   , 'Helvetica' );
-        set([hTitle, hXLabel, hYLabel], ...
-        'FontName'   , 'AvantGarde');
-        set([gca]             , ...
-        'FontSize'   , 8           );
-        set([hXLabel, hYLabel]  , ...
-        'FontSize'   , 10          );
-        set( hTitle                    , ...
-        'FontSize'   , 12          , ...
-        'FontWeight' , 'bold'      );
+            plot(x,y);
 
-        set(gca, ...
-        'Box'         , 'off'     , ...
-        'TickDir'     , 'out'     , ...
-        'TickLength'  , [.02 .02] , ...
-        'XMinorTick'  , 'on'      , ...
-        'YMinorTick'  , 'on'      , ...
-        'YGrid'       , 'on'      , ...
-        'XColor'      , [.3 .3 .3], ...
-        'YColor'      , [.3 .3 .3], ...
-        'LineWidth'   , 1         );
-        subplot(1,2,2);
+            hTitle  = title ('Distance Between Mites');
+            hYLabel = ylabel('Distance (pixel) ');
+            hXLabel = xlabel('Seconds ');
+            
+            set([hTitle, hXLabel, hYLabel], ...
+           'FontName'   , 'AvantGarde');
+       
+            set([hXLabel, hYLabel]  , ...
+            'FontSize'   , 10          );
+            set( hTitle                    , ...
+            'FontSize'   , 12          , ...
+            'FontWeight' , 'bold'      );
+            set( gca                       , ...
+            'FontName'   , 'Helvetica' );
+
+            set([gca]             , ...
+            'FontSize'   , 8           );
+
+
+            set(gca, ...
+            'Box'         , 'off'     , ...
+            'TickDir'     , 'out'     , ...
+            'TickLength'  , [.02 .02] , ...
+            'XMinorTick'  , 'on'      , ...
+            'YMinorTick'  , 'on'      , ...
+            'YGrid'       , 'on'      , ...
+            'XColor'      , [.3 .3 .3], ...
+            'YColor'      , [.3 .3 .3], ...
+            'LineWidth'   , 1         );
+            figure(f1);
+        elseif (~drawGraphic && ishandle(f2))
+            close(f2);
+        end
+        
+        subplot(2,1,2);
         drawnow
+
+
 
         end
     
         totalTime = totalTime + toc(countTime);
         
-        uicontrol('Style','pushbutton','String','Fast Forward','Callback',@faster,'Position',[10 5 90 30]);
-        uicontrol('Style','pushbutton','String','Normal Speed','Callback',@normalSpeed,'Position',[100 5 90 30]);
-
-        
         i = i + rate;
+    end
+    figure;
+    keyframes
+    rows = ceil(length(keyframes)/3);
+        for j=1 : length(keyframes)
+            rows
+            subplot(rows,3,j);
+            imshow(imread(sprintf('SonMated\\frame_%.1d.tif',keyframes(j))));
+            title(sprintf('Timestamp: %d s',round(frame2time(keyframes(j)))));
         end
+        
 end
 
 
