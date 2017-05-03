@@ -16,7 +16,10 @@ function proj1_try
 
     nrTouch = 0;
     inTouch = false;
-
+    d1= 0;
+    d2 = 0;
+    Vmale = [];
+    Vfemale = [];
 
 nrCouples=0;
 coupleDurations = zeros(1,10);
@@ -42,6 +45,7 @@ coupleDurations = zeros(1,10);
 
     se= strel('disk',9);
 
+    f3 = figure;
     f2 = figure;
     f1 = figure;
 
@@ -49,6 +53,7 @@ coupleDurations = zeros(1,10);
         uicontrol('Style','pushbutton','String','Fast Forward','Callback',@faster,'Position',[10 2 90 20]);
         uicontrol('Style','pushbutton','String','Normal Speed','Callback',@normalSpeed,'Position',[100 2 90 20]);
         uicontrol('Style','pushbutton','String','Toggle Graphic','Callback',@toggleGraphic,'Position',[400 2 90 20]);
+        uicontrol('Style','pushbutton','String','Toggle Velocity','Callback',@toggleVelocity,'Position',[300 2 90 20]);
         uicontrol('Style','pushbutton','String','Exit','Callback',@exit,'Position',[500 2 90 20]);
         hold off
 
@@ -58,6 +63,7 @@ coupleDurations = zeros(1,10);
     drawTrail = true;
     lastNormal = -10;
     drawGraphic = false;
+    drawVelocity = false;
     toReturn = false;
     x = [];
     y = [];
@@ -73,6 +79,11 @@ coupleDurations = zeros(1,10);
        rate = 1;
        drawTrail = true;
        lastNormal = i;
+    end
+
+    function toggleVelocity(~,~)
+        drawVelocity = ~drawVelocity;
+        drawVelocity
     end
 
     function toggleGraphic(~,~)
@@ -314,9 +325,60 @@ coupleDurations = zeros(1,10);
         
         %Display Touhes
         tex9 = text(0, -200, str6);
-
+        
+        
+        Vmale(length(Vmale)+1) = d1/0.13;
+        
+        if (d2 > 40)
+            Vfemale(length(Vfemale)+1) = Vfemale(length(Vfemale));
+        else
+            Vfemale(length(Vfemale)+1) = d2/0.13;
+        end
         x(length(x)+1) = i/30;
         y(length(y)+1) = distance;
+        
+        %only draws the graphic is prompted by the user
+        if(drawVelocity)
+            figure(f3);
+            %subplot(1,2,1);
+
+
+            plot(x,Vmale,x,Vfemale);
+
+            hTitle  = title ('Mites Velocity');
+            hYLabel = ylabel('Velocity (pixel/s) ');
+            hXLabel = xlabel('Seconds ');
+            
+            set([hTitle, hXLabel, hYLabel], ...
+           'FontName'   , 'AvantGarde');
+       
+            set([hXLabel, hYLabel]  , ...
+            'FontSize'   , 10          );
+            set( hTitle                    , ...
+            'FontSize'   , 12          , ...
+            'FontWeight' , 'bold'      );
+            set( gca                       , ...
+            'FontName'   , 'Helvetica' );
+
+            set([gca]             , ...
+            'FontSize'   , 8           );
+
+
+            set(gca, ...
+            'Box'         , 'off'     , ...
+            'TickDir'     , 'out'     , ...
+            'TickLength'  , [.02 .02] , ...
+            'XMinorTick'  , 'on'      , ...
+            'YMinorTick'  , 'on'      , ...
+            'YGrid'       , 'on'      , ...
+            'XColor'      , [.3 .3 .3], ...
+            'YColor'      , [.3 .3 .3], ...
+            'LineWidth'   , 1         );
+            figure(f1);
+        elseif (~drawVelocity && ishandle(f3))
+            close(f3);
+        end        
+        
         
         %only draws the graphic is prompted by the user
         if(drawGraphic)
