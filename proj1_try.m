@@ -2,8 +2,6 @@ function proj1_try
 
     clear all, close all
 
-    globalCount = tic;
-
     imgbk = imread('SonMated\\BG_1.tif');
 
     thr = 30;
@@ -16,6 +14,9 @@ function proj1_try
 
     nrTouch = 0;
     inTouch = false;
+    
+    coupleFirst = 0;
+    coupleLast = 0;
 
 
 nrCouples=0;
@@ -24,8 +25,6 @@ coupleDurations = zeros(1,10);
 
     firstTouch = 0; 
     firstTouchTime=0; 
-    totalTime=0;
-
 
     male = 0;
     female = 0;
@@ -97,15 +96,12 @@ coupleDurations = zeros(1,10);
         if(toReturn)
            return 
         end
-        countTime = tic;
 
         imgfr = imread(sprintf('SonMated\\frame_%.1d.tif',i)); %corre cada frame do video com o ciclo //works
         hold off
         imshow(imgfr);
 
 
-        
-        
         imgdif = ... %cria uma binary image imgdif que ? a diferen?a entre o frame actual e o background dando uma imagem com os elementos que se est?o a mover // works
         (abs(double(imgbk(:,:,1))-double(imgfr(:,:,1)))>thr) | ...
         (abs(double(imgbk(:,:,2))-double(imgfr(:,:,2)))>thr) | ...
@@ -191,11 +187,11 @@ coupleDurations = zeros(1,10);
                             Switch = false;
                         end
                         
-                        str1 = strcat('Mite 1 velocity: ',space, num2str(d1), space, ' pixel/frame');
-                        str2 = strcat('Mite 2 velocity: ',space, num2str(d2), space, ' pixel/frame');
+                        str1 = strcat('Male velocity: ',space, num2str(d1), space, ' pixel/frame');
+                        str2 = strcat('Female velocity: ',space, num2str(d2), space, ' pixel/frame');
 
-                        distanceMale = distanceMale + d1; %fix, not d1
-                        distanceFemale = distanceFemale + d2; %fix, not d2
+                        distanceMale = distanceMale + d1; 
+                        distanceFemale = distanceFemale + d2; 
 
                         if ( Switch == true)
                         line([cent1(l-1) cent3(l)] , [cent2(l-1)  cent4(l)], [1 1],'LineWidth',2.25,'LineStyle','-', 'Color','red');
@@ -240,11 +236,11 @@ coupleDurations = zeros(1,10);
             time = text(middlePoint(1), middlePoint(2), num2str(distance)); 
             
             if (inTouch==true)
-                inTouch = false;
-                duration = toc(coupleTime)*rate;
+                coupleLast=i;
+                duration = frame2time(coupleLast)-frame2time(coupleFirst);
                 if (duration >= 60)
                     nrCouples=nrCouples + 1;
-                    coupleDurations(nrCouples+1)=duration;
+                    coupleDurations(nrCouples)=duration;
                 end
             end
             inTouch = false;
@@ -257,11 +253,11 @@ coupleDurations = zeros(1,10);
             imshow(img_resized);
             if (inTouch == false)
                 inTouch=true;
-                coupleTime = tic;
+                 coupleFirst=i;
                 nrTouch = nrTouch + 1;
             end
             if (firstTouch==0)    
-                firstTouchTime=toc(globalCount)*rate;
+                firstTouchTime= frame2time(i)-frame2time(1);
                 firstTouch=1;  
             end
                 
@@ -281,14 +277,15 @@ coupleDurations = zeros(1,10);
 
             str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(frame2time(i)), 'seconds');
         else
-        str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(frame2time(i)), 'seconds');  
+        str5 = strcat('Time spent until the 1st couple (or touch) occurs: ', num2str(firstTouchTime), 'seconds');  
         end
 		
-		for j=1:nrCouples
-			if coupleDurations(nrCouples+1) > 0
-				strAux = strcat('Couple number', space, num2str(j), space, 'lasted', space, num2str(coupleDurations(nrCouples+1)-60),space, 'seconds');
-				text (0 , 500 + j*40, strAux);
-			end
+        
+		for c=1: nrCouples
+			if (coupleDurations(c) > 0)
+				strAux = strcat('Couple number', space, num2str(c), space, 'lasted', space, num2str(coupleDurations(c)-60),space, 'seconds');
+				text (0 , 500 + c*40, strAux);
+            end
 		end
         
         if(distance ~= 0 && ~expectTouch)
@@ -367,7 +364,7 @@ coupleDurations = zeros(1,10);
 
         end
     
-        totalTime = totalTime + toc(countTime)*rate;
+        %totalTime = totalTime + toc(countTime)*rate;
         
         i = i + rate;
     end
