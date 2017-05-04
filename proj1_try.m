@@ -350,7 +350,9 @@ coupleDurations = zeros(1,10);
             
             set([hTitle, hXLabel, hYLabel], ...
            'FontName'   , 'AvantGarde');
-       
+%             hold on;
+%             legend('male','female');
+%             hold off;
             set([hXLabel, hYLabel]  , ...
             'FontSize'   , 10          );
             set( hTitle                    , ...
@@ -465,6 +467,11 @@ coupleDurations = zeros(1,10);
         plot(cent1(f),cent2(f), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
         plot(cent3(f),cent4(f), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
     end
+    
+        tex4 = text(0, 500, '\bullet', 'color', 'r' );
+        tex5 = text(20, 500, 'Male');
+        tex6 = text(110, 500, '\bullet', 'color','b');
+        tex7 = text(130, 500, 'Female');
         
 end
 
