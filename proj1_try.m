@@ -333,7 +333,7 @@ coupleDurations = zeros(1,10);
         else
             Vfemale(length(Vfemale)+1) = d2/0.13;
         end
-        x(length(x)+1) = i/30;
+        x(length(x)+1) = frame2time(i);
         y(length(y)+1) = distance;
         
         %only draws the graphic is prompted by the user
@@ -433,15 +433,28 @@ coupleDurations = zeros(1,10);
         i = i + rate;
     end
 	
+    
+    distanceFrameMatrix = [];
+    speedFrameMatrix = [];
+    for k = 1 : length(x)
+        distanceFrameMatrix = [distanceFrameMatrix; x(k) y(k)];
+        speedFrameMatrix = [speedFrameMatrix; x(k) Vmale(k) Vfemale(k)];
+    end
+    xlswrite('recordData.xlsx',{'time','distance'},'Sheet1','A1');
+    xlswrite('recordData.xlsx',{'time','maleSpeed','femaleSpeed'},'Sheet1','D1');
+    xlswrite('recordData.xlsx',speedFrameMatrix,'Sheet1','D2');
+    xlswrite('recordData.xlsx',distanceFrameMatrix,'Sheet1','A2');
+    
+    
     figure;
     keyframes
     rows = ceil(length(keyframes)/3);
-        for j=1 : length(keyframes)
-            rows
-            subplot(rows,3,j);
-            imshow(imread(sprintf('SonMated\\frame_%.1d.tif',keyframes(j))));
-            title(sprintf('Timestamp: %d s',round(frame2time(keyframes(j)))));
-        end
+    for j=1 : length(keyframes)
+        rows
+        subplot(rows,3,j);
+        imshow(imread(sprintf('SonMated\\frame_%.1d.tif',keyframes(j))));
+        title(sprintf('Timestamp: %d s',round(frame2time(keyframes(j)))));
+    end
         
 end
 
