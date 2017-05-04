@@ -17,6 +17,8 @@ function proj1_try
 
     coupleFirst = 0;
     coupleLast = 0;
+    
+    coupleV = [];
 
     d1= 0;
     d2 = 0;
@@ -51,11 +53,11 @@ coupleDurations = zeros(1,10);
     f1 = figure;
 
         hold on
-        uicontrol('Style','pushbutton','String','Fast Forward','Callback',@faster,'Position',[10 2 90 20]);
-        uicontrol('Style','pushbutton','String','Normal Speed','Callback',@normalSpeed,'Position',[100 2 90 20]);
-        uicontrol('Style','pushbutton','String','Toggle Graphic','Callback',@toggleGraphic,'Position',[400 2 90 20]);
-        uicontrol('Style','pushbutton','String','Toggle Velocity','Callback',@toggleVelocity,'Position',[300 2 90 20]);
-        uicontrol('Style','pushbutton','String','Exit','Callback',@exit,'Position',[500 2 90 20]);
+        uicontrol('Style','pushbutton','String','Fast Forward','Callback',@faster,'Position',[400 100 100 30]);
+        uicontrol('Style','pushbutton','String','Normal Speed','Callback',@normalSpeed,'Position',[500 100 100 30]);
+        uicontrol('Style','pushbutton','String','Toggle Graphic','Callback',@toggleGraphic,'Position',[400 60 100 30]);
+        uicontrol('Style','pushbutton','String','Toggle Velocity','Callback',@toggleVelocity,'Position',[500 60 100 30]);
+        uicontrol('Style','pushbutton','String','Exit','Callback',@exit,'Position',[450 20 100 30]);
         hold off
 
 
@@ -105,6 +107,8 @@ coupleDurations = zeros(1,10);
     i=1;
 
     while i <= seqLength
+        
+        
         
         if(toReturn)
             clear all; close all;
@@ -257,6 +261,7 @@ coupleDurations = zeros(1,10);
                 if (duration >= 60)
                     nrCouples=nrCouples + 1;
                     coupleDurations(nrCouples)=duration;
+                    coupleV(length(coupleV)+1) = coupleFirst;
                 end
             end
             inTouch = false;
@@ -280,13 +285,13 @@ coupleDurations = zeros(1,10);
         end
         
 
-        if (length(inds)> 1 && l > 2)
-            tex = text(0, -100, str1);
-            tex1 = text(0, -60, str2);
-        end
+%         if (length(inds)> 1 && l > 2)
+%             tex = text(0, -100, str1);
+%             tex1 = text(0, -60, str2);
+%         end
 		
         str3 = strcat('Distance performed by the male: ', num2str(distanceMale), ' pixels');
-        str4 = strcat('Distance performed by the female: ', num2str(distanceMale), ' pixels');
+        str4 = strcat('Distance performed by the female: ', num2str(distanceFemale), ' pixels');
         str6 = strcat('Number of touches: ', num2str(nrTouch));
 
         if (firstTouchTime == 0)
@@ -313,8 +318,8 @@ coupleDurations = zeros(1,10);
         end
         
         %Display distante
-        tex2 = text(0, -300, str3);
-        tex3 = text(0, -260, str4);
+        tex2 = text(0, -140, str3);
+        tex3 = text(0, -100, str4);
         
         %Display legend: Male, Female
         tex4 = text(0, 500, '\bullet', 'color',[0.117647 0.564706 1] );
@@ -323,10 +328,10 @@ coupleDurations = zeros(1,10);
         tex7 = text(130, 500, 'Female');
         
         %Display Time
-        tex8 = text(0, -160, str5);
+        tex8 = text(0, -60, str5);
         
         %Display Touhes
-        tex9 = text(0, -200, str6);
+        tex9 = text(0, -20, str6);
         
         
         Vmale(length(Vmale)+1) = d1/0.13;
@@ -391,6 +396,7 @@ coupleDurations = zeros(1,10);
 
 
             plot(x,y);
+            
 
             hTitle  = title ('Distance Between Mites');
             hYLabel = ylabel('Distance (pixel) ');
@@ -410,7 +416,7 @@ coupleDurations = zeros(1,10);
             set([gca]             , ...
             'FontSize'   , 8           );
 
-
+x
             set(gca, ...
             'Box'         , 'off'     , ...
             'TickDir'     , 'out'     , ...
@@ -426,7 +432,7 @@ coupleDurations = zeros(1,10);
             close(f2);
         end
         
-        subplot(2,1,2);
+  
         drawnow
 
 
@@ -458,8 +464,18 @@ coupleDurations = zeros(1,10);
         for j=1 : length(keyframes)
             rows
             subplot(rows,3,j);
-            imshow(imread(sprintf('SonMated\\frame_%.1d.tif',keyframes(j))));
-            title(sprintf('Timestamp: %d s',round(frame2time(keyframes(j)))));
+            for l=1 : length(coupleV)
+               if keyframes(j) == coupleV(l)
+                   
+                  imshow(imread(sprintf('SonMated\\frame_%.1d.tif',keyframes(j))));
+                  title(sprintf( 'Copula Timestamp: %d s',round(frame2time(keyframes(j)))));
+                  
+               else
+                  imshow(imread(sprintf('SonMated\\frame_%.1d.tif',keyframes(j))));
+                  title(sprintf( 'Toque Timestamp: %d s',round(frame2time(keyframes(j)))));  
+               end
+            end
+
         end
      
     figure; 
