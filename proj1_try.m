@@ -443,6 +443,15 @@ coupleDurations = zeros(1,10);
             imshow(imread(sprintf('SonMated\\frame_%.1d.tif',keyframes(j))));
             title(sprintf('Timestamp: %d s',round(frame2time(keyframes(j)))));
         end
+     
+    figure; 
+   
+    imshow(imread('SonMated\\BG_1.tif'));
+     hold on; axis off;
+    for f=1 : length(cent1)
+        plot(cent1(f),cent2(f), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
+        plot(cent3(f),cent4(f), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
+    end
         
 end
 
