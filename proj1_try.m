@@ -107,7 +107,8 @@ coupleDurations = zeros(1,10);
     while i <= seqLength
         
         if(toReturn)
-           return 
+            clear all; close all;
+            return 
         end
 
         imgfr = imread(sprintf('SonMated\\frame_%.1d.tif',i)); %corre cada frame do video com o ciclo //works
@@ -229,8 +230,10 @@ coupleDurations = zeros(1,10);
                 dWindow = max([lin col]) - upLPoint + 1;
                 
                 if(j==male)
+                    text(regionProps(inds(male)).Centroid(1)+ 10, regionProps(inds(male)).Centroid(2)+ 10, 'male', 'Color', [0.117647 0.564706 1]);
                     rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
                 elseif(j==female)
+                    text(regionProps(inds(female)).Centroid(1)+ 15, regionProps(inds(female)).Centroid(2)+ 15, 'female', 'Color', [1 0.0784314 0.576471]);
                     rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)], 'EdgeColor',[1 0.0784314 0.576471], 'linewidth',2)
                 end
             end
@@ -242,11 +245,11 @@ coupleDurations = zeros(1,10);
 
             X = [point1(1), point1(2); point2(1), point2(2)];    
 
-            %Euclidean distance of the coins
+            %Euclidean distance of the  Mites
             distance = pdist(X,'euclidean');
-            line([point1(1) point2(1)] , [point1(2) point2(2)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
-            middlePoint = [(point1(1)+point2(1))/2, (point1(2)+point2(2))/2];
-            time = text(middlePoint(1), middlePoint(2), num2str(distance)); 
+%             line([point1(1) point2(1)] , [point1(2) point2(2)], [1 1], 'Marker','.','LineStyle','-', 'Color','red');
+%             middlePoint = [(point1(1)+point2(1))/2, (point1(2)+point2(2))/2];
+%             time = text(middlePoint(1), middlePoint(2), num2str(distance)); 
             
             if (inTouch==true)
                 coupleLast=i;
@@ -460,9 +463,12 @@ coupleDurations = zeros(1,10);
         end
      
     figure; 
-   
+    
     imshow(imread('SonMated\\BG_1.tif'));
      hold on; axis off;
+    hTitle = title ('Final mites trail');
+    set(hTitle,'FontName'   , 'AvantGarde');
+    set( hTitle, 'FontSize', 12, 'FontWeight', 'bold');
     for f=1 : length(cent1)
         plot(cent1(f),cent2(f), 'Marker', 'd','MarkerFaceColor' ,'r', 'MarkerEdgeColor' ,'k','MarkerSize',3 );                  
         plot(cent3(f),cent4(f), 'Marker', 'd','MarkerFaceColor' ,'b', 'MarkerEdgeColor' ,'k','MarkerSize',3 );
