@@ -293,6 +293,8 @@ coupleDurations = zeros(1,10);
         str3 = strcat('Distance performed by the male: ', num2str(distanceMale), ' pixels');
         str4 = strcat('Distance performed by the female: ', num2str(distanceFemale), ' pixels');
         str6 = strcat('Number of touches: ', num2str(nrTouch));
+        str7 = strcat('Playback Speed: x', num2str(rate));
+        str8 = strcat('Current Time: ', num2str(frame2time(i)), 's');
 
         if (firstTouchTime == 0)
 
@@ -332,6 +334,9 @@ coupleDurations = zeros(1,10);
         
         %Display Touhes
         tex9 = text(0, -20, str6);
+        
+        text10= text(300 , -20, str7);
+        text11 = text(600, -20, str8);
         
         
         Vmale(length(Vmale)+1) = d1/0.13;
