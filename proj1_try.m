@@ -48,8 +48,8 @@ coupleDurations = zeros(1,10);
 
     se= strel('disk',9);
 
-    f3 = figure;
-    f2 = figure;
+    %f3 = figure;
+    %f2 = figure;
     f1 = figure;
 
         hold on
@@ -107,7 +107,7 @@ coupleDurations = zeros(1,10);
     i=1;
 
     while i <= seqLength
-        
+        subplot(2,2,[1 3]);
         
         
         if(toReturn)
@@ -350,9 +350,10 @@ coupleDurations = zeros(1,10);
         y(length(y)+1) = distance;
         
         %only draws the graphic is prompted by the user
+        h3 = subplot(2,2,4);
         if(drawVelocity)
-            figure(f3);
-            %subplot(1,2,1);
+            %figure(f3);
+            %h3 = subplot(2,2,4);
 
 
             plot(x,Vmale,x,Vfemale);
@@ -388,16 +389,17 @@ coupleDurations = zeros(1,10);
             'XColor'      , [.3 .3 .3], ...
             'YColor'      , [.3 .3 .3], ...
             'LineWidth'   , 1         );
-            figure(f1);
-        elseif (~drawVelocity && ishandle(f3))
-            close(f3);
+            %figure(f1);
+        elseif (~drawVelocity )
+            %drawVelocity
+            delete(h3);
         end        
         
         
         %only draws the graphic is prompted by the user
+        h2 = subplot(2,2,2);
         if(drawGraphic)
-            figure(f2);
-            %subplot(1,2,1);
+            %figure(f2);
 
 
             plot(x,y);
@@ -421,7 +423,6 @@ coupleDurations = zeros(1,10);
             set([gca]             , ...
             'FontSize'   , 8           );
 
-x
             set(gca, ...
             'Box'         , 'off'     , ...
             'TickDir'     , 'out'     , ...
@@ -433,8 +434,8 @@ x
             'YColor'      , [.3 .3 .3], ...
             'LineWidth'   , 1         );
             figure(f1);
-        elseif (~drawGraphic && ishandle(f2))
-            close(f2);
+        elseif (~drawGraphic)
+            delete(h2);
         end
         
   
