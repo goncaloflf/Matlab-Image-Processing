@@ -11,7 +11,8 @@ for i = 0: seqLength
     imshow(imgfr)
     drawnow
     
-    vessel_detection(imgfr,9,200,1);
+    [mask_v, targets]= vessel_detection(imgfr,9,200,1);
+    target_filter(targets);
     %imshow(imgdif);
     %drawnow
     

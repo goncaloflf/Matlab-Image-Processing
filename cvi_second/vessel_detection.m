@@ -14,14 +14,8 @@ function [mask_v, targets] = vessel_detection(I,SR,R_threshold,dif_threshold)
     
     imshow(mask_v)
     drawnow
-    targets = extract_targets(mask_v);
+    targets = bwlabel(mask_v);
 
    % I(:,:,1)
-
-end
-
-function targets = extract_targets(mask_v)
-
-   targets = bwlabel(mask_v);
 
 end
