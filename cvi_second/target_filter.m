@@ -25,7 +25,7 @@ function [ region ] = target_filter( targets )
                
                for j = 1: length(regionProps)
                     close = false;
-                    point1=[regionProps(inds(1)).Centroid(1), regionProps(inds(1)).Centroid(2)];
+                    point1=[regionProps(inds(k)).Centroid(1), regionProps(inds(k)).Centroid(2)];
                     point2=[regionProps(j).Centroid(1), regionProps(j).Centroid(2)];
                     distance = pdist([point1(1), point1(2); point2(1), point2(2)],'euclidean');
 %                     distance
