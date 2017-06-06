@@ -1,4 +1,4 @@
-function [ region ] = target_filter( targets )
+function [ region,time_struct ] = target_filter( targets,time_struct, aux )
 %TARGET_FILTER Summary of this function goes here
 %   Detailed explanation goes here
     
@@ -37,8 +37,18 @@ function [ region ] = target_filter( targets )
                end
                
                if (close == false)
+                   size = length(time_struct);
+                   length(time_struct)
+                   if (size <= 5 ) 
+                       time_struct(size+1).Area = regionProps(inds(k)).Area;
+                       time_struct(size+1).Centroid = [regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)];
+                       
+                   else
+                       time_struct(aux).Area = regionProps(inds(k)).Area;
+                       time_struct(aux).Centroid = [regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)];
+                   end
+                   
                    region = regionProps(inds(k));
-                   length(region)
                end
            end
                        if(length(region) == 1)
