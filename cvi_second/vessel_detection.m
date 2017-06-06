@@ -12,8 +12,8 @@ function [mask_v, targets] = vessel_detection(I,SR,R_threshold,dif_threshold)
 
     SE = strel('disk',SR); mask_v = imdilate(mask,SE);
     
-    imshow(mask_v)
-    drawnow
+%     imshow(mask_v)
+%     drawnow
     targets = bwlabel(mask_v);
 
    % I(:,:,1)
