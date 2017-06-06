@@ -2,7 +2,7 @@ clear all, close all
 seqLength = 1000;
 
 
-for i = 0: seqLength
+for i = 0: 5 : seqLength
  
   
     
