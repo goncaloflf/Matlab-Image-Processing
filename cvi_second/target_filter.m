@@ -38,14 +38,13 @@ function [ region,time_struct ] = target_filter( targets,time_struct )
                
                if (close == false)
                    size = length(time_struct);
-                   if (size <= 5 ) 
+                   if (size == 0 ) 
                        time_struct(size+1).Area = regionProps(inds(k)).Area;
                        time_struct(size+1).Centroid = [regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)];
                        
                    else
-
-                        
-                        for z = 1: 6
+                    
+                        for z = 1: size
                            if( abs(time_struct(z).Area - regionProps(inds(k)).Area) < 200 && pdist([time_struct(1).Centroid(1), time_struct(1).Centroid(2); regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)],'euclidean') < 200)
                                 time_struct(2:end) = time_struct(1:end-1);
                                 time_struct(1).Area = regionProps(inds(k)).Area;
