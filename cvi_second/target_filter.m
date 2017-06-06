@@ -29,7 +29,7 @@ function [ region,time_struct ] = target_filter( targets,time_struct, aux )
                     point2=[regionProps(j).Centroid(1), regionProps(j).Centroid(2)];
                     distance = pdist([point1(1), point1(2); point2(1), point2(2)],'euclidean');
 %                     distance
-                    if( (0 < distance) &&(distance < 200))
+                    if( (0 < distance) &&(distance < 100))
                         close = true;
                         break;
                     end
