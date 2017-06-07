@@ -16,12 +16,11 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
 
         for k= 1: regcount
             if((regcount == 1 && regionProps(inds(1)).Area > 10000))
-               fprintf('AQUI CRL %i.\n',frame)
-               checkByRed(im);
+               fprintf('AQUI CRL %i.\n',frame);
+               redRegProp = checkByRed(im);
                return;
                
             elseif (regcount > 1)
-                frame
                 bigInd = find([regionProps.Area]>2000);
                 aux = 0;
                 if(~isempty(bigInd))
@@ -31,12 +30,14 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                        end
                     end
                     if(aux == regcount - 1)
-                       checkByRed(im);
+                       redRegProp = checkByRed(im);
                        return; 
                     end
                 end
                     
             end
+            
+            
 %            a = 0;
 %            for h=1 : regcount
 %               if(regionProps(inds(h)).BoundingBox(1) <= 0.5 || regionProps(inds(h)).BoundingBox(1)+ regionProps(inds(h)).BoundingBox(3) >= 1023 || regionProps(inds(h)).BoundingBox(2) <= 0.5 ||  regionProps(inds(h)).BoundingBox(2)+ regionProps(inds(h)).BoundingBox(4) >= 767)
@@ -56,9 +57,9 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
 %              end
 
            if(regionProps(inds(k)).BoundingBox(1) <= 0.5 || regionProps(inds(k)).BoundingBox(1)+ regionProps(inds(k)).BoundingBox(3) >= 1023 || regionProps(inds(k)).BoundingBox(2) <= 0.5 ||  regionProps(inds(k)).BoundingBox(2)+ regionProps(inds(k)).BoundingBox(4) >= 767)
-               hold on;
-               rectangle('Position',[regionProps(inds(k)).BoundingBox(1), regionProps(inds(k)).BoundingBox(2),regionProps(inds(k)).BoundingBox(3),regionProps(inds(k)).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
-               drawnow
+%                hold on;
+%                rectangle('Position',[regionProps(inds(k)).BoundingBox(1), regionProps(inds(k)).BoundingBox(2),regionProps(inds(k)).BoundingBox(3),regionProps(inds(k)).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
+%                drawnow
            else
                
                for j = 1: length(regionProps)
