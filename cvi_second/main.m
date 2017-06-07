@@ -1,4 +1,5 @@
-clear all, close all
+ao clear all, close all
+warning('off', 'Images:initSize:adjustingMag');
 seqLength = 1000;
 time_struct = [];
 
@@ -24,8 +25,7 @@ for i = 0: seqLength
         drawGT(vectorGT, i);
     end
     [mask_v, targets]= vessel_detection(imgfr,9,200,1);
-    [ region,time_struct ] = target_filter(targets, time_struct);
-    
+    [ region,time_struct ] = target_filter(targets, time_struct, imgfr, 2809+i);
 
     %imshow(imgdif);
     %drawnow
