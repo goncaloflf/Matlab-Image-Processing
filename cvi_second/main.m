@@ -13,7 +13,7 @@ vectorGT = importdata(filename,delimiterIn);
 
 %for i = 0: 5 : seqLength
 
-for i = 0: seqLength
+for i = 0: 5:  seqLength
 
     
     imgfr = imread(sprintf('video\\frame_%.1d.tif',2809+ i)); %corre cada frame do video com o ciclo //works
