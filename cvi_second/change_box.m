@@ -15,6 +15,7 @@ function  new_box  = change_box( ground_box, direction, size )
  
     new_box(3) = ground_box(3)* size;
     new_box(4) = ground_box(3)* size;
+    new_box(5) = ground_box(5);
     
 end
 
