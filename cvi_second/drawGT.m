@@ -9,6 +9,5 @@ function drawGT( vectorGT, i )
  rectangle('Position',[vectorGT(i,2) , vectorGT(i,3), vectorGT(i,4), vectorGT(i,5)], 'EdgeColor',[0.486275 0.988235 0], 'linewidth',2);
  drawnow
 
- disp(i);
- disp(vectorGT(i,1));
+
 end

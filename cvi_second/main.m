@@ -1,4 +1,4 @@
-ao clear all, close all
+clear all, close all
 warning('off', 'Images:initSize:adjustingMag');
 seqLength = 1000;
 time_struct = [];
@@ -16,7 +16,7 @@ vectorGT = importdata(filename,delimiterIn);
 for i = 0: seqLength
 
     
-    imgfr = imread(sprintf('C:\\Users\\Beatriz\\Desktop\\MEIC\\CVI\\2Projeto\\cvi-first\\cvi_second\\video\\frame_%.1d.tif',2809+ i)); %corre cada frame do video com o ciclo //works
+    imgfr = imread(sprintf('video\\frame_%.1d.tif',2809+ i)); %corre cada frame do video com o ciclo //works
     hold off
     imshow(imgfr)
     drawnow
