@@ -51,6 +51,7 @@ for i = 0: 5:  seqLength
 end
     vectorIoU=iou_calc(vectorGT, regions_vector);
     iou_plot(vectorIoU);
+    tre_plot(vectorIoU);
  %   tre_plot( vecIoU1, vecIoU2, vecIoU3, vecIoU4, vecIoU5); 
 
 
