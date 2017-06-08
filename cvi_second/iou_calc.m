@@ -6,7 +6,9 @@ function  iou_vector  = iou_calc( ground_box_vector, regions_vector )
      iou_vector = [];
     for h = 1: length(regions_vector)
        if (~isempty(fieldnames(regions_vector(h))))
-            interA = rectint([ground_box_vector(h).X ground_box_vector(h).Y ground_box_vector(h).W ground_box_vector(h).H], regions_vector(h).BoundingBox);
+            regions_vector(h).BoundingBox
+           box=[ground_box_vector(h).X ground_box_vector(h).Y ground_box_vector(h).W ground_box_vector(h).H];
+            interA = rectint(box, regions_vector(h).BoundingBox);
             unionA = (ground_box(h).W*ground_box(h).H)+ (regions_vector(h).BoundingBox(3)*regions_vector(h).BoundingBox(4))- interA;
             iou = interA/unionA;
             iou_vector(length(iou_vector)+1)= iou;

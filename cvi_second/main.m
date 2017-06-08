@@ -28,8 +28,7 @@ for i = 0: 5:  seqLength
     end
     [mask_v, targets]= vessel_detection(imgfr,9,200,1);
     [ region,time_struct ] = target_filter(targets, time_struct, imgfr, 2809+i);
-    
-    vectorIoU(i+1)=iou_calc(vectorGT, region);
+   
 
     if (~isequal(region, []))
         regions_vector(i).Area = region.Area;
@@ -45,12 +44,12 @@ for i = 0: 5:  seqLength
         truth_vector(size).H = vectorGT(indice,5);
         
     end
-    
 
     %imshow(imgdif);
     %drawnow
     
 end
+    vectorIoU=iou_calc(truth_vector, regions_vector);
     iou_plot(vectorIoU);
  %   tre_plot( vecIoU1, vecIoU2, vecIoU3, vecIoU4, vecIoU5); 
 
