@@ -1,4 +1,4 @@
-function [ output_args ] = checkByRed( im )
+function [ region , time_struct  ] = checkByRed( im , time_struct)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -18,20 +18,37 @@ function [ output_args ] = checkByRed( im )
     bw_red = bwlabel(snap_red,8);
 
     % Properties for each labeled region
-    stats_red = regionprops(bw_red, 'BoundingBox','Centroid');
+    regionProps= regionprops(bw_red,'area','Filledimage','Centroid','BoundingBox');
+
     
-    
-    % Display new image
-    hold off
-    %imshow(bw_red);
-    %drawnow
-    % Puts red objects in rectangular box
-    for object_red = 1:length(stats_red)
-        
-        rectangle('Position',[stats_red(object_red).BoundingBox(1)-30, stats_red(object_red).BoundingBox(2)-30,stats_red(object_red).BoundingBox(3)+60,stats_red(object_red).BoundingBox(4)+60], 'EdgeColor',[1 0 0], 'linewidth',2);
-        drawnow
-        
+    lastcent=[time_struct(1).Centroid(1),time_struct(1).Centroid(2)];
+    dist = 100000;
+    region = [];
+    for i = 1 : length(regionProps)
+       aux_point = [regionProps(i).Centroid(1),regionProps(i).Centroid(2)];
+       aux_dist = pdist([lastcent(1),lastcent(2);aux_point(1),aux_point(2)],'euclidean');
+       if aux_dist < dist 
+           region = regionProps(i);
+           dist = aux_dist;
+       end
     end
+    
+    if length(region) == 1
+        time_struct(2:end) = time_struct(1:end-1);
+        time_struct(1).Area = 120;
+        time_struct(1).Centroid = [region.Centroid(1),region.Centroid(2)];
+    end
+
+
+    % Puts red objects in rectangular box
+%     hold on
+%     for object_red = 1:length(stats_red)
+%         
+%         rectangle('Position',[stats_red(object_red).BoundingBox(1)-30, stats_red(object_red).BoundingBox(2)-30,stats_red(object_red).BoundingBox(3)+60,stats_red(object_red).BoundingBox(4)+60], 'EdgeColor',[1 0 0], 'linewidth',2);
+%         drawnow
+%         
+%     end
+%     hold off
 
 end
 

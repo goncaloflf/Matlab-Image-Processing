@@ -2,6 +2,8 @@ clear all, close all
 warning('off', 'Images:initSize:adjustingMag');
 seqLength = 1000;
 time_struct = [];
+regions_vector = {};
+truth_vector = [];
 
 %Load Ground Truth into array vectorGT   [frameNr x y w h id tf]  id e tf
 %são irreleventes
@@ -13,10 +15,10 @@ vectorIoU = zeros(1000);
 
 %for i = 0: 5 : seqLength
 
-for i = 0: seqLength
+for i = 0: 5:  seqLength
 
     
-    imgfr = imread(sprintf('C:\\Users\\Beatriz\\Desktop\\MEIC\\CVI\\2Projeto\\cvi-first\\cvi_second\\video\\frame_%.1d.tif',2809+ i)); %corre cada frame do video com o ciclo //works
+    imgfr = imread(sprintf('video\\frame_%.1d.tif',2809+ i)); %corre cada frame do video com o ciclo //works
     hold off
     imshow(imgfr)
     drawnow
@@ -29,6 +31,21 @@ for i = 0: seqLength
     
     vectorIoU(i+1)=iou_calc(vectorGT, region);
 
+    if (~isequal(region, []))
+        regions_vector(i).Area = region.Area;
+        regions_vector(i).Centroid = region.Centroid;
+        regions_vector(i).BoundingBox = region.BoundingBox;
+        regions_vector(i).FilledImage = region.FilledImage;
+        indice = find (vectorGT(:,1) == 2809 + i);
+        size = length(truth_vector)+1;
+        truth_vector(size).Frames = vectorGT(indice,1);
+        truth_vector(size).X = vectorGT(indice,2);
+        truth_vector(size).Y = vectorGT(indice,3);
+        truth_vector(size).W = vectorGT(indice,4);
+        truth_vector(size).H = vectorGT(indice,5);
+        
+    end
+    
 
     %imshow(imgdif);
     %drawnow

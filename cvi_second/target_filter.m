@@ -7,7 +7,7 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
     region = [];
     regionProps = regionprops(targets,'area','Filledimage','Centroid','BoundingBox'); 
     inds = find([regionProps.Area]>minArea);
-    
+    usingRed = 0;
    
     regcount = length(inds);
   
@@ -16,12 +16,11 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
 
         for k= 1: regcount
             if((regcount == 1 && regionProps(inds(1)).Area > 10000))
-               fprintf('AQUI CRL %i.\n',frame)
-               checkByRed(im);
-               return;
+               fprintf('AQUI CRL %i.\n',frame);
+               [region time_struct] = checkByRed(im, time_struct);
+               usingRed = 1;
                
             elseif (regcount > 1)
-                frame
                 bigInd = find([regionProps.Area]>2000);
                 aux = 0;
                 if(~isempty(bigInd))
@@ -31,35 +30,19 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                        end
                     end
                     if(aux == regcount - 1)
-                       checkByRed(im);
-                       return; 
+                       [region time_struct] = checkByRed(im, time_struct);
+                       usingRed = 1;
                     end
                 end
                     
             end
-%            a = 0;
-%            for h=1 : regcount
-%               if(regionProps(inds(h)).BoundingBox(1) <= 0.5 || regionProps(inds(h)).BoundingBox(1)+ regionProps(inds(h)).BoundingBox(3) >= 1023 || regionProps(inds(h)).BoundingBox(2) <= 0.5 ||  regionProps(inds(h)).BoundingBox(2)+ regionProps(inds(h)).BoundingBox(4) >= 767)
-%                  a = a + 1; 
-%               end
-%            end
-%            
-%            if(a == length(inds))
-%               disp('red!!')
-%               checkByRed(im);
-%               return;
-%            end
-
-%              if((frame < 3520) && frame > 3200)
-%                     checkByRed(im);
-%                     return;
-%              end
+            
 
            if(regionProps(inds(k)).BoundingBox(1) <= 0.5 || regionProps(inds(k)).BoundingBox(1)+ regionProps(inds(k)).BoundingBox(3) >= 1023 || regionProps(inds(k)).BoundingBox(2) <= 0.5 ||  regionProps(inds(k)).BoundingBox(2)+ regionProps(inds(k)).BoundingBox(4) >= 767)
-               hold on;
-               rectangle('Position',[regionProps(inds(k)).BoundingBox(1), regionProps(inds(k)).BoundingBox(2),regionProps(inds(k)).BoundingBox(3),regionProps(inds(k)).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
-               drawnow
-           else
+%                hold on;
+%                rectangle('Position',[regionProps(inds(k)).BoundingBox(1), regionProps(inds(k)).BoundingBox(2),regionProps(inds(k)).BoundingBox(3),regionProps(inds(k)).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
+%                drawnow
+           elseif usingRed == 0
                
                for j = 1: length(regionProps)
                     close = false;
@@ -83,7 +66,7 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                    else
                     
                         for z = 1: size
-                           if( abs(time_struct(z).Area - regionProps(inds(k)).Area) < 200 && pdist([time_struct(1).Centroid(1), time_struct(1).Centroid(2); regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)],'euclidean') < 200)
+                           if( abs(time_struct(z).Area - regionProps(inds(k)).Area) < 1000 && pdist([time_struct(1).Centroid(1), time_struct(1).Centroid(2); regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)],'euclidean') < 500)
                                 time_struct(2:end) = time_struct(1:end-1);
                                 time_struct(1).Area = regionProps(inds(k)).Area;
                                 time_struct(1).Centroid = [regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)];
@@ -91,15 +74,19 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                                 break;
                            end
                         end
-
                    end
                    
                
                end
            end
                        if(length(region) == 1)
-                            rectangle('Position',[region(1).BoundingBox(1), region(1).BoundingBox(2),region(1).BoundingBox(3),region(1).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
-                            drawnow
+                            if usingRed == 0
+                                rectangle('Position',[region(1).BoundingBox(1), region(1).BoundingBox(2),region(1).BoundingBox(3),region(1).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
+                                drawnow
+                            elseif usingRed == 1
+                                rectangle('Position',[region(1).BoundingBox(1)-30, region(1).BoundingBox(2)-30,region(1).BoundingBox(3)+60,region(1).BoundingBox(4)+60], 'EdgeColor',[1 0 0], 'linewidth',2);
+                                drawnow      
+                            end
                        end
         end
 
