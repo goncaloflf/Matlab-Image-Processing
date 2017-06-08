@@ -84,8 +84,7 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                                 rectangle('Position',[region(1).BoundingBox(1), region(1).BoundingBox(2),region(1).BoundingBox(3),region(1).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
                                 drawnow
                             elseif usingRed == 1
-                                rectangle('Position',[region(1).BoundingBox(1)-30, region(1).BoundingBox(2)-30,region(1).BoundingBox(3)+60,region(1).BoundingBox(4)+60], 'EdgeColor',[1 0 0], 'linewidth',2);
-                                drawnow      
+                                rectangle('Position',[region(1).BoundingBox(1)-20, region(1).BoundingBox(2)-15,region(1).BoundingBox(3)+30,region(1).BoundingBox(4)+30], 'EdgeColor',[1 0 0], 'linewidth',2);                                drawnow      
                             end
                        end
         end

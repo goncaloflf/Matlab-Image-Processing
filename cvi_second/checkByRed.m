@@ -22,7 +22,7 @@ function [ region , time_struct  ] = checkByRed( im , time_struct)
 
     
     lastcent=[time_struct(1).Centroid(1),time_struct(1).Centroid(2)];
-    dist = 100000;
+    dist = 150;
     region = [];
     for i = 1 : length(regionProps)
        aux_point = [regionProps(i).Centroid(1),regionProps(i).Centroid(2)];
