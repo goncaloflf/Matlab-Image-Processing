@@ -3,15 +3,21 @@ function  iou_vector  = iou_calc( ground_box_vector, regions_vector )
 %   Detailed explanation goes here
     
     aux = [];
+
      iou_vector = [];
     for h = 1: length(regions_vector)
-       if (~isempty(fieldnames(regions_vector(h))))
-            regions_vector(h).BoundingBox
-           box=[ground_box_vector(h).X ground_box_vector(h).Y ground_box_vector(h).W ground_box_vector(h).H];
+       if (~isempty(regions_vector(h).Area))
+           disp('yo')
+           ground_box_vector(h+1,2) 
+           ground_box_vector(h+1,3) 
+           ground_box_vector(h+1,4) 
+           ground_box_vector(h+1,5)
+           box=[ground_box_vector(h+1,2) ground_box_vector(h+1,3) ground_box_vector(h+1,4) ground_box_vector(h+1,5)];
             interA = rectint(box, regions_vector(h).BoundingBox);
-            unionA = (ground_box(h).W*ground_box(h).H)+ (regions_vector(h).BoundingBox(3)*regions_vector(h).BoundingBox(4))- interA;
+            unionA = ((ground_box_vector(h+1,4))*(ground_box_vector(h+1,5)))+ ((regions_vector(h).BoundingBox(3))*(regions_vector(h).BoundingBox(4)))- interA;
             iou = interA/unionA;
             iou_vector(length(iou_vector)+1)= iou;
+            iou_vector
            
 %            size = length(aux)+1;
 %            aux(size).Area = regions_vector(h).Area;
@@ -26,7 +32,12 @@ function  iou_vector  = iou_calc( ground_box_vector, regions_vector )
     end
 
 
-
+%            box=[ground_box_vector(h+1).X ground_box_vector(h+1).Y ground_box_vector(h+1).W ground_box_vector(h+1).H];
+%             interA = rectint(box, regions_vector(h).BoundingBox);
+%             unionA = ((ground_box_vector(h+1).W)*(ground_box_vector(h+1).H))+ ((regions_vector(h).BoundingBox(3))*(regions_vector(h).BoundingBox(4)))- interA;
+%             iou = interA/unionA;
+%             iou_vector(length(iou_vector)+1)= iou;
+%             iou_vector
 
 
 %     interA = rectint(ground_box, test_box);
