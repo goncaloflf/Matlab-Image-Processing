@@ -1,4 +1,4 @@
-function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
+function [ region,time_struct ] = target_filterGT( targets,time_struct,im ,frame,vectorGT)
 %TARGET_FILTER Summary of this function goes here
 %   Detailed explanation goes here
     
@@ -8,8 +8,16 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
     regionProps = regionprops(targets,'area','Filledimage','Centroid','BoundingBox'); 
     inds = find([regionProps.Area]>minArea);
     usingRed = 0;
-   
+    troca = false;
     regcount = length(inds);
+    
+    if ( frame == 2814 || frame == 3014  || frame == 3214 || frame == 3414 || frame == 3614)
+        disp('aqui')
+        troca = true; 
+    end
+    
+    
+    
   
     
     if (regcount > 0)
@@ -17,7 +25,7 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
         for k= 1: regcount
             if((regcount == 1 && regionProps(inds(1)).Area > 10000))
                fprintf('MIMOSAS %i.\n',frame);
-               [region time_struct] = checkByRed(im, time_struct);
+               [region time_struct] = checkByRedGT(im, time_struct, vectorGT, troca, frame);
                usingRed = 1;
                
             elseif (regcount > 1)
@@ -30,7 +38,7 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                        end
                     end
                     if(aux == regcount - 1)
-                       [region time_struct] = checkByRed(im, time_struct);
+                       [region time_struct] = checkByRedGT(im, time_struct, vectorGT, troca, frame);
                        usingRed = 1;
                     end
                 end
@@ -59,9 +67,24 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                
                if (close == false)
                    size = length(time_struct);
-                   if (size == 0 ) 
+                   if (size == 0) 
                        time_struct(size+1).Area = regionProps(inds(k)).Area;
                        time_struct(size+1).Centroid = [regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)];
+                       
+                   elseif ( troca == true)
+                      time_struct = [];
+                       time_struct(1).Area = regionProps(inds(k)).Area;
+                       time_struct(1).Centroid = [vectorGT(frame-2810,2)+(vectorGT(frame-2810,4)/2),vectorGT(frame-2810,3)+(vectorGT(frame-2810,5)/2)];
+                       time_struct(1).Centroid
+                       regionProps(inds(k)).Centroid
+                       pdist([time_struct(1).Centroid(1), time_struct(1).Centroid(2); regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)],'euclidean')
+                       
+                       if(abs(time_struct(1).Area - regionProps(inds(k)).Area) < 1000 && pdist([time_struct(1).Centroid(1), time_struct(1).Centroid(2); regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)],'euclidean') < 500)
+                            time_struct(2:end) = time_struct(1:end-1);
+                            time_struct(1).Area = regionProps(inds(k)).Area;
+                            time_struct(1).Centroid = [regionProps(inds(k)).Centroid(1),regionProps(inds(k)).Centroid(2)];
+                            region = regionProps(inds(k));
+                       end
                        
                    else
                     
@@ -84,13 +107,12 @@ function [ region,time_struct ] = target_filter( targets,time_struct,im ,frame)
                                 rectangle('Position',[region(1).BoundingBox(1), region(1).BoundingBox(2),region(1).BoundingBox(3),region(1).BoundingBox(4)], 'EdgeColor',[0.117647 0.564706 1], 'linewidth',2);
                                 drawnow
                             elseif usingRed == 1
-                                rectangle('Position',[region(1).BoundingBox(1)-20, region(1).BoundingBox(2)-15,region(1).BoundingBox(3)+30,region(1).BoundingBox(4)+30], 'EdgeColor',[1 0 0], 'linewidth',2);                                drawnow      
+                                rectangle('Position',[region(1).BoundingBox(1)-20, region(1).BoundingBox(2)-15,region(1).BoundingBox(3)+30,region(1).BoundingBox(4)+30], 'EdgeColor',[1 0 0], 'linewidth',2);
+                                drawnow      
                             end
                        end
         end
 
     end
 end
-
-
 

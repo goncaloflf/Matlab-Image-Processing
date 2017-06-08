@@ -14,8 +14,44 @@ vectorGT = importdata(filename,delimiterIn);
 vectorIoU = zeros(1000);
 
 %for i = 0: 5 : seqLength
+exec_type=0;
+dir = 0;
+sca = 0;
 
-for i = 0:  seqLength
+disp('Bem vindo aos barquinhos');
+disp('1: Execução normal');
+disp('2: TRE');
+disp('3: SRE');
+disp('4: Sair');
+opcao = input('Escolha a opção: ');
+switch(opcao)
+    case 1
+        exec_type = 1;
+    case 2
+        exec_type = 2;
+    case 3
+        exec_type = 3;
+        disp('Escolha a direcção');
+        disp('1: Up');
+        disp('2: Down');
+        disp('3: Left');
+        disp('4: Right');
+        dir = input('Escolha a direcção: ');
+        disp('Escolha o escalamento');
+        disp('1: 0,8x');
+        disp('2: 0,9x');
+        disp('3: 1,1x');
+        disp('4: 1,2x');
+        sca = input('Escolha o escalamento: ');
+    case 4
+        return;
+    otherwise
+        disp('Opção inválida');
+        return;
+end
+
+
+for i = 0: 5 : seqLength
 
     
     imgfr = imread(sprintf('video\\frame_%.1d.tif',2809+ i)); %corre cada frame do video com o ciclo //works
@@ -27,8 +63,13 @@ for i = 0:  seqLength
         drawGT(vectorGT, i);
     end
     [mask_v, targets]= vessel_detection(imgfr,9,200,1);
-    [ region,time_struct ] = target_filter(targets, time_struct, imgfr, 2809+i);
-   
+    if exec_type == 1
+        [ region,time_struct ] = target_filter(targets, time_struct, imgfr, 2809+i);
+    elseif exec_type == 2
+        [ region,time_struct ] = target_filterGT(targets, time_struct, imgfr, 2809+i,vectorGT);
+    elseif exec_type == 3
+        [ region,time_struct ] = target_filterSRE(targets, time_struct, imgfr, 2809+i,vectorGT, dir, sca);
+    end
 
     if (~isequal(region, []))
         regions_vector(i).Area = region.Area;
@@ -51,7 +92,7 @@ for i = 0:  seqLength
 end
     vectorIoU=iou_calc(vectorGT, regions_vector);
     iou_plot(vectorIoU);
-    tre_plot(vectorIoU);
+    tre_plot(vectorIoU, exec_type, dir, sca);
  %   tre_plot( vecIoU1, vecIoU2, vecIoU3, vecIoU4, vecIoU5); 
 
 
